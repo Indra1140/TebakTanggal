@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Tebak Tanggal</title>
+  <style>
+    * { margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    button {
+      position: absolute;
+      border: none;
+      cursor: pointer;
+    }
+
+    #startBtn {
+      top: 60%;
+      left: 30%;
+      width: 40%;
+      height: 10%;
+      background-color: transparent;
+    }
+
+    #yesBtn, #noBtn {
+      position: absolute;
+      width: 30%;
+      height: 10%;
+      background-color: transparent;
+      display: none;
+    }
+
+    #yesBtn { top: 80%; right: 15%; }
+    #noBtn  { top: 80%; left: 15%; }
+
+    #yesRestartBtn, #noRestartBtn {
+      position: absolute;
+      background-color: transparent;
+      border: none;
+      width: 40%;
+      height: 15%;
+      z-index: 2;
+      display: none;
+    }
+
+    #yesRestartBtn { top: 40%; right: 9%; }
+    #noRestartBtn  { top: 40%; left: 9%; }
+
+  </style>
+</head>
+<body>
+
+  <div id="game">
+    <button id="startBtn"></button>
+    <button id="yesBtn"></button>
+    <button id="noBtn"></button>
+  </div>
+
+  <!-- Tombol YES/NO untuk halaman mainlagi -->
+  <button id="yesRestartBtn"></button>
+  <button id="noRestartBtn"></button>
+
+  <div id="result" style="display: none; position: absolute; top: 45.5%; width: 100%; text-align: center; font-size: 32px; color: black; font-weight: bold; right: 2%">
+    <span id="birthdate"></span>
+  </div>
+  
+    <!-- Audio Backsound -->
+  <audio id="bgm" src="bgsound.mp3" loop></audio>
+
+<script>
+  const gameDiv = document.getElementById("game");
+  const startBtn = document.getElementById("startBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+  const yesRestartBtn = document.getElementById("yesRestartBtn");
+  const noRestartBtn = document.getElementById("noRestartBtn");
+  const resultDiv = document.getElementById("result");
+  const birthdateSpan = document.getElementById("birthdate");
+
+  let step = 1;
+  let answers = [];
+
+  gameDiv.style.backgroundImage = "url('mulaigame.jpg')";
+
+  startBtn.addEventListener("click", () => {
+    step = 1;
+    answers = [];
+    showQuestion(step);
+  });
+
+  function showQuestion(index) {
+    gameDiv.style.backgroundImage = `url('Pertanyaan${index}.jpg')`;
+    startBtn.style.display = "none";
+    yesBtn.style.display = "block";
+    noBtn.style.display = "block";
+    yesRestartBtn.style.display = "none";
+    noRestartBtn.style.display = "none";
+    resultDiv.style.display = "none";
+  }
+
+  yesBtn.addEventListener("click", () => {
+    answers.push(true);
+    nextStep();
+  });
+
+  noBtn.addEventListener("click", () => {
+    answers.push(false);
+    nextStep();
+  });
+
+  function nextStep() {
+    step++;
+    if (step <= 5) {
+      showQuestion(step);
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    let total = 0;
+    for (let i = 0; i < answers.length; i++) {
+      if (answers[i]) {
+        total += Math.pow(2, i);
+      }
+    }
+
+    gameDiv.style.backgroundImage = "url('tebakan.jpg')";
+    yesBtn.style.display = "none";
+    noBtn.style.display = "none";
+    birthdateSpan.textContent = total;
+    resultDiv.style.display = "block";
+
+    setTimeout(() => {
+      gameDiv.addEventListener("click", goToMainLagi, { once: true });
+    }, 2000);
+  }
+
+  function goToMainLagi() {
+    gameDiv.style.backgroundImage = "url('mainlagi.jpg')";
+    resultDiv.style.display = "none";
+    startBtn.style.display = "none";
+    yesRestartBtn.style.display = "block";
+    noRestartBtn.style.display = "block";
+  }
+
+  yesRestartBtn.addEventListener("click", () => {
+    step = 1;
+    answers = [];
+    yesRestartBtn.style.display = "none";
+    noRestartBtn.style.display = "none";
+    showQuestion(step);
+  });
+
+  noRestartBtn.addEventListener("click", () => {
+    yesRestartBtn.style.display = "none";
+    noRestartBtn.style.display = "none";
+    gameDiv.style.backgroundImage = "url('mulaigame.jpg')";
+    startBtn.style.display = "block";
+  });
+  
+      // Tampilkan popup
+    const mulai = confirm("Mulai permainan dengan musik latar?");
+
+    // Ambil elemen audio
+    const bgm = document.getElementById("bgm");
+
+    // Jika pengguna tekan OK
+    if (mulai) {
+      bgm.play().catch((err) => {
+        console.log("Gagal memutar musik:", err);
+      });
+    }
+</script>
+
+</body>
+</html>
